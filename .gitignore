@@ -1,0 +1,51 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+*.dist-info/
+.Python
+env/
+venv/
+ENV/
+.env
+
+# SQLite database
+*.sqlite3
+*.db
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+.eggs/
+
+# Django stuff:
+local_settings.py
+media
+staticfiles
+
+# Ignore coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Ignore PyCharm
+.idea/
+
+# Ignore node modules if any
+node_modules/
