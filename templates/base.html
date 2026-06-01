@@ -1,0 +1,110 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Campus Complaint Portal{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="{% static 'css/portal.css' %}" rel="stylesheet">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" href="{% url 'home' %}">
+            <span class="brand-mark"><i class="bi bi-building-check"></i></span>
+            <span>
+                <strong>Campus</strong>
+                <small>Complaint Portal</small>
+            </span>
+        </a>
+
+        {% if user.is_authenticated %}
+            <nav class="sidebar-nav">
+                {% if is_faculty_account %}
+                    <a href="{% url 'faculty_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="{% url 'faculty_complaint_list' %}"><i class="bi bi-ticket-detailed"></i> Complaints</a>
+                    <a href="{% url 'feedback_analytics' %}"><i class="bi bi-stars"></i> Feedback</a>
+                    <a href="{% url 'export_complaints_csv' %}"><i class="bi bi-filetype-csv"></i> Export</a>
+                    <a href="{% url 'profile' %}"><i class="bi bi-person-gear"></i> Profile</a>
+                {% else %}
+                    <a href="{% url 'student_dashboard' %}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+                    <a href="{% url 'complaint_create' %}"><i class="bi bi-plus-circle"></i> Raise Complaint</a>
+                    <a href="{% url 'complaint_list' %}"><i class="bi bi-clock-history"></i> History</a>
+                    <a href="{% url 'profile' %}"><i class="bi bi-person-circle"></i> Profile</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+
+        <div class="sidebar-footer">
+            <button class="theme-toggle" type="button" data-theme-toggle>
+                <i class="bi bi-moon-stars"></i>
+                <span>Theme</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-panel">
+        <header class="topbar">
+            <button class="menu-button" type="button" data-sidebar-toggle aria-label="Toggle navigation">
+                <i class="bi bi-list"></i>
+            </button>
+            <div>
+                <p class="eyebrow mb-0">College Helpdesk</p>
+                <h1 class="page-heading">{% block page_heading %}Campus Complaint Portal{% endblock %}</h1>
+            </div>
+            <div class="topbar-actions">
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'mark_notifications_read' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button class="notification-button" type="submit" aria-label="Mark notifications read">
+                            <i class="bi bi-bell"></i>
+                            {% if unread_notifications_count %}
+                                <span>{{ unread_notifications_count }}</span>
+                            {% endif %}
+                        </button>
+                    </form>
+                    <span class="user-pill">
+                        <i class="bi bi-person"></i>
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="btn btn-outline-danger btn-sm" type="submit">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-primary btn-sm" href="{% url 'login' %}">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Login
+                    </a>
+                {% endif %}
+            </div>
+        </header>
+
+        {% if messages %}
+            <div class="message-stack">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <section class="content-wrap">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/portal.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

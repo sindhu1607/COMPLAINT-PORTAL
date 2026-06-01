@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}{{ complaint.ticket_id }} | Campus Complaint Portal{% endblock %}
+{% block page_heading %}{{ complaint.ticket_id }}{% endblock %}
+
+{% block content %}
+<div class="detail-layout" data-status-url="{% url 'complaint_status_json' complaint.pk %}">
+    <section class="panel detail-main">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">{{ complaint.category.name }}</p>
+                <h2>{{ complaint.title }}</h2>
+            </div>
+            <span class="status status-{{ complaint.status }}" data-status-badge>{{ complaint.get_status_display }}</span>
+        </div>
+
+        <div class="workflow-track">
+            {% for step in workflow_steps %}
+                <div class="workflow-step {% if step.is_done %}done{% endif %} {% if step.is_current %}current{% endif %}">
+                    <span>{{ forloop.counter }}</span>
+                    <small>{{ step.label }}</small>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="meta-strip">
+            <span><i class="bi bi-building"></i> {{ complaint.assigned_department.name|default:"Unassigned" }}</span>
+            <span><i class="bi bi-person-badge"></i> {{ complaint.assigned_faculty.user.get_full_name|default:"Faculty not assigned" }}</span>
+            <span><i class="bi bi-geo-alt"></i> {{ complaint.location|default:"Location not specified" }}</span>
+            <span><i class="bi bi-flag"></i> <span class="priority priority-{{ complaint.priority }}">{{ complaint.get_priority_display }}</span></span>
+            <span><i class="bi bi-calendar"></i> {{ complaint.created_at|date:"d M Y, h:i A" }}</span>
+            {% if complaint.is_reopened %}
+                <span><i class="bi bi-arrow-counterclockwise"></i> Reopened</span>
+            {% endif %}
+        </div>
+
+        {% if is_faculty_area %}
+            <div class="student-snapshot">
+                <div>
+                    <p class="eyebrow">Student Details</p>
+                    <strong>{{ complaint.student.get_full_name|default:complaint.student.username }}</strong>
+                </div>
+                <span>{{ student_profile.roll_number|default:complaint.student.username }}</span>
+                <span>{{ student_profile.department.name|default:"Department unavailable" }}</span>
+                <span>{{ complaint.student.email }}</span>
+                <span>{{ student_profile.phone|default:"Phone unavailable" }}</span>
+            </div>
+        {% endif %}
+
+        <p class="complaint-description">{{ complaint.description|linebreaksbr }}</p>
+
+        <div class="attachment-grid">
+            {% for attachment in complaint.attachments.all %}
+                <a class="attachment-card" href="{{ attachment.file.url }}" target="_blank" rel="noopener">
+                    {% if attachment.is_image %}
+                        <img src="{{ attachment.file.url }}" alt="Proof attachment {{ forloop.counter }}">
+                    {% else %}
+                        <i class="bi bi-paperclip"></i>
+                    {% endif %}
+                    <span>Proof {{ forloop.counter }}</span>
+                    <small>{{ attachment.uploaded_at|date:"d M Y" }}</small>
+                </a>
+            {% empty %}
+                <p class="text-secondary">No proof attachments uploaded.</p>
+            {% endfor %}
+        </div>
+
+        <hr>
+
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Discussion</p>
+                <h2>Comments</h2>
+            </div>
+        </div>
+        <div class="comment-list">
+            {% for comment in complaint.comments.all %}
+                <article class="comment {% if comment.is_faculty_reply %}admin-comment{% endif %}">
+                    <div>
+                        <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                        {% if comment.is_faculty_reply %}<span class="mini-badge">Faculty</span>{% endif %}
+                    </div>
+                    <p>{{ comment.message|linebreaksbr }}</p>
+                    <small>{{ comment.created_at|date:"d M Y, h:i A" }}</small>
+                </article>
+            {% empty %}
+                <p class="text-secondary">No comments yet.</p>
+            {% endfor %}
+        </div>
+        <form method="post" action="{% url 'add_comment' complaint.pk %}" class="comment-form">
+            {% csrf_token %}
+            {{ comment_form.message }}
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-chat-dots"></i>
+                Add Comment
+            </button>
+        </form>
+    </section>
+
+    <aside class="detail-side">
+        {% if is_faculty_area %}
+            <section class="panel">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Faculty Action</p>
+                        <h2>Update ticket</h2>
+                    </div>
+                </div>
+                {% if complaint.status == "submitted" %}
+                    <form method="post" action="{% url 'faculty_accept_complaint' complaint.pk %}" class="mb-3">
+                        {% csrf_token %}
+                        <button class="btn btn-success w-100" type="submit">
+                            <i class="bi bi-check2-circle"></i>
+                            Accept Complaint
+                        </button>
+                    </form>
+                {% endif %}
+                <form method="post" action="{% url 'faculty_update_complaint' complaint.pk %}" class="stacked-form">
+                    {% csrf_token %}
+                    <label class="form-label">Department</label>
+                    {{ status_form.assigned_department }}
+                    <label class="form-label">Assigned Faculty</label>
+                    {{ status_form.assigned_faculty }}
+                    <label class="form-label">Status</label>
+                    {{ status_form.status }}
+                    <label class="form-label">Note</label>
+                    {{ status_form.admin_note }}
+                    <div class="faculty-action-grid">
+                        <button class="btn btn-dark" type="submit">
+                            <i class="bi bi-save"></i>
+                            Save Update
+                        </button>
+                        {% if complaint.status != "resolved" and complaint.status != "closed" %}
+                            <button class="btn btn-success" type="submit" name="status_action" value="resolved">
+                                <i class="bi bi-check2-circle"></i>
+                                Mark Resolved
+                            </button>
+                        {% endif %}
+                    </div>
+                </form>
+            </section>
+        {% else %}
+            {% if complaint.can_student_edit %}
+                <section class="panel">
+                    <p class="eyebrow">Draft Controls</p>
+                    <h2>Before review</h2>
+                    <div class="stacked-actions">
+                        <a class="btn btn-outline-primary w-100" href="{% url 'complaint_edit' complaint.pk %}">
+                            <i class="bi bi-pencil-square"></i>
+                            Edit Complaint
+                        </a>
+                        <a class="btn btn-outline-danger w-100" href="{% url 'complaint_delete' complaint.pk %}">
+                            <i class="bi bi-trash"></i>
+                            Delete Complaint
+                        </a>
+                    </div>
+                </section>
+            {% endif %}
+            {% if complaint.status == "resolved" or complaint.status == "closed" %}
+                <section class="panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Feedback</p>
+                            <h2>Resolution rating</h2>
+                        </div>
+                    </div>
+                    {% if complaint.feedback %}
+                        <div class="feedback-existing">
+                            <strong>{{ complaint.feedback.rating }}/5</strong>
+                            <span>{% if complaint.feedback.was_resolved %}Problem resolved{% else %}Needs more work{% endif %}</span>
+                            <p>{{ complaint.feedback.comment|default:"No comment provided." }}</p>
+                        </div>
+                    {% else %}
+                        <form method="post" action="{% url 'submit_feedback' complaint.pk %}" class="stacked-form">
+                            {% csrf_token %}
+                            <div class="form-check">
+                                {{ feedback_form.was_resolved }}
+                                <label class="form-check-label">Was your problem resolved?</label>
+                            </div>
+                            <label class="form-label">Rate faculty support</label>
+                            {{ feedback_form.rating }}
+                            <label class="form-label">Comment</label>
+                            {{ feedback_form.comment }}
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="bi bi-star"></i>
+                                Submit Feedback
+                            </button>
+                        </form>
+                    {% endif %}
+                    <form method="post" action="{% url 'reopen_complaint' complaint.pk %}" class="mt-3">
+                        {% csrf_token %}
+                        <button class="btn btn-outline-danger w-100" type="submit">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            Reopen Complaint
+                        </button>
+                    </form>
+                </section>
+            {% endif %}
+        {% endif %}
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Timeline</p>
+                    <h2>Status tracking</h2>
+                </div>
+            </div>
+            <div class="timeline">
+                {% for item in complaint.status_history.all %}
+                    <div class="timeline-item">
+                        <span class="timeline-dot"></span>
+                        <strong>{{ item.get_status_display }}</strong>
+                        <p>{{ item.note }}</p>
+                        <small>
+                            {{ item.created_at|date:"d M Y, h:i A" }}
+                            {% if item.changed_by %}by {{ item.changed_by.get_full_name|default:item.changed_by.username }}{% endif %}
+                        </small>
+                    </div>
+                {% empty %}
+                    <p class="text-secondary">Timeline will appear after submission.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </aside>
+</div>
+{% endblock %}

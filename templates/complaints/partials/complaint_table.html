@@ -1,0 +1,48 @@
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+        <tr>
+            <th>Ticket</th>
+            {% if admin_table %}<th>Student</th>{% endif %}
+            <th>Title</th>
+            <th>Category</th>
+            <th>Department</th>
+            {% if admin_table %}<th>Faculty</th>{% endif %}
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for complaint in complaints %}
+            <tr>
+                <td><strong>{{ complaint.ticket_id }}</strong></td>
+                {% if admin_table %}
+                    <td>{{ complaint.student.get_full_name|default:complaint.student.username }}</td>
+                {% endif %}
+                <td>{{ complaint.title }}</td>
+                <td>{{ complaint.category.name }}</td>
+                <td>{{ complaint.assigned_department.name|default:"Unassigned" }}</td>
+                {% if admin_table %}
+                    <td>{{ complaint.assigned_faculty.user.get_full_name|default:"Unassigned" }}</td>
+                {% endif %}
+                <td><span class="priority priority-{{ complaint.priority }}">{{ complaint.get_priority_display }}</span></td>
+                <td><span class="status status-{{ complaint.status }}">{{ complaint.get_status_display }}</span></td>
+                <td>{{ complaint.created_at|date:"d M Y" }}</td>
+                <td>
+                    <a class="btn btn-outline-primary btn-sm" href="{% url 'complaint_detail' complaint.pk %}">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="{% if admin_table %}10{% else %}8{% endif %}" class="text-center text-secondary py-4">
+                    No complaints found.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

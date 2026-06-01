@@ -1,0 +1,38 @@
+{% extends "public_base.html" %}
+
+{% block title %}Faculty Login | Campus Complaint Portal{% endblock %}
+
+{% block content %}
+<div class="auth-layout compact">
+    <div class="auth-hero admin">
+        <span class="badge text-bg-light">Faculty Operations</span>
+        <h2>Monitor, assign, resolve, and report complaints quickly.</h2>
+        <p>Designed for department faculty, coordinators, and campus administrators.</p>
+    </div>
+    <div class="panel auth-card">
+        <h3>Faculty sign in</h3>
+        <p class="text-secondary">Use your faculty ID or registered email.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% include "partials/form_errors.html" %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.username.id_for_label }}">Faculty ID or email</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+            </div>
+            <button class="btn btn-dark w-100" type="submit">
+                <i class="bi bi-shield-lock"></i>
+                Open Faculty Dashboard
+            </button>
+        </form>
+        <div class="auth-links">
+            <a href="{% url 'login' %}">Student login</a>
+            <a href="{% url 'faculty_register' %}">Create faculty account</a>
+            <a href="{% url 'password_reset' %}">Forgot password?</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "public_base.html" %}
+
+{% block title %}Faculty Registration | Campus Complaint Portal{% endblock %}
+
+{% block content %}
+<div class="panel form-panel wide">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Faculty Access</p>
+            <h2>Create faculty profile</h2>
+        </div>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'faculty_login' %}">
+            <i class="bi bi-arrow-left"></i>
+            Faculty Login
+        </a>
+    </div>
+    <form method="post" class="row g-3" novalidate>
+        {% csrf_token %}
+        {% include "partials/form_errors.html" %}
+        <div class="col-md-6">
+            <label class="form-label">Faculty name</label>
+            {{ form.full_name }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            {{ form.email }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Faculty ID</label>
+            {{ form.faculty_id }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Department</label>
+            {{ form.department }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Phone</label>
+            {{ form.phone }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Designation</label>
+            {{ form.designation }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Password</label>
+            {{ form.password1 }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Confirm password</label>
+            {{ form.password2 }}
+        </div>
+        <div class="col-12">
+            <button class="btn btn-dark" type="submit">
+                <i class="bi bi-person-badge"></i>
+                Create Faculty Account
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

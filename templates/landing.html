@@ -1,0 +1,83 @@
+{% extends "public_base.html" %}
+
+{% block title %}Campus Complaint Portal{% endblock %}
+
+{% block content %}
+<main class="landing-page">
+    <section class="landing-hero">
+        <div class="landing-hero-content">
+            <span class="hero-kicker">Smart campus issue resolution</span>
+            <h1>Campus Complaint Portal</h1>
+            <p>Students can report issues with proof, track every status update, and close the loop with feedback while faculty teams manage resolution from a focused dashboard.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary btn-lg" href="{% url 'register' %}">
+                    <i class="bi bi-person-plus"></i>
+                    Register as Student
+                </a>
+                <a class="btn btn-light btn-lg" href="{% url 'faculty_login' %}">
+                    <i class="bi bi-shield-check"></i>
+                    Faculty Portal
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-strip">
+        <article>
+            <strong>{{ stats.categories }}</strong>
+            <span>Complaint Categories</span>
+        </article>
+        <article>
+            <strong>{{ stats.departments }}</strong>
+            <span>Campus Departments</span>
+        </article>
+        <article>
+            <strong>{{ stats.resolved }}</strong>
+            <span>Resolved Tickets</span>
+        </article>
+    </section>
+
+    <section class="landing-section">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Portal Flow</p>
+                <h2>Built for transparent complaint handling</h2>
+            </div>
+        </div>
+        <div class="feature-grid">
+            <article class="feature-card">
+                <i class="bi bi-send-check"></i>
+                <h3>Raise</h3>
+                <p>Students submit title, description, category, department, priority, location, and proof attachments.</p>
+            </article>
+            <article class="feature-card">
+                <i class="bi bi-diagram-3"></i>
+                <h3>Track</h3>
+                <p>Every complaint receives an automatic ID, timeline, status tracker, and notification history.</p>
+            </article>
+            <article class="feature-card">
+                <i class="bi bi-person-workspace"></i>
+                <h3>Resolve</h3>
+                <p>Faculty accept, review, update, comment, resolve, and analyze complaints from one dashboard.</p>
+            </article>
+            <article class="feature-card">
+                <i class="bi bi-star-half"></i>
+                <h3>Improve</h3>
+                <p>Resolved tickets collect student satisfaction feedback and ratings for service analytics.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="landing-section contact-band">
+        <div>
+            <p class="eyebrow">Help Desk</p>
+            <h2>Need urgent support?</h2>
+            <p>Use Emergency priority for safety, electricity, water, or security issues that need immediate attention.</p>
+        </div>
+        <a class="btn btn-dark" href="{% url 'login' %}">
+            <i class="bi bi-life-preserver"></i>
+            Open Helpdesk
+        </a>
+    </section>
+</main>
+{% endblock %}

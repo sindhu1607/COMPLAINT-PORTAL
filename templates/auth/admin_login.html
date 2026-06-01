@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login | Campus Complaint Portal{% endblock %}
+{% block page_heading %}Admin Portal{% endblock %}
+
+{% block content %}
+<div class="auth-layout compact">
+    <div class="auth-hero admin">
+        <span class="badge text-bg-light">Admin Operations</span>
+        <h2>Monitor, assign, resolve, and report complaints quickly.</h2>
+        <p>Designed for department coordinators and college administrators.</p>
+    </div>
+    <div class="panel auth-card">
+        <h3>Admin sign in</h3>
+        <p class="text-secondary">Only staff and superuser accounts can enter.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% include "partials/form_errors.html" %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+            </div>
+            <button class="btn btn-dark w-100" type="submit">
+                <i class="bi bi-shield-lock"></i>
+                Open Admin Dashboard
+            </button>
+        </form>
+        <div class="auth-links">
+            <a href="{% url 'login' %}">Student login</a>
+            <a href="{% url 'password_reset' %}">Forgot password?</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

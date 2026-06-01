@@ -1,0 +1,60 @@
+{% extends "public_base.html" %}
+
+{% block title %}Register | Campus Complaint Portal{% endblock %}
+
+{% block content %}
+<div class="panel form-panel wide">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">New Account</p>
+            <h2>Create your student profile</h2>
+        </div>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'login' %}">
+            <i class="bi bi-arrow-left"></i>
+            Login
+        </a>
+    </div>
+    <form method="post" class="row g-3" novalidate>
+        {% csrf_token %}
+        {% include "partials/form_errors.html" %}
+        <div class="col-md-6">
+            <label class="form-label">Full name</label>
+            {{ form.full_name }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            {{ form.email }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Roll number</label>
+            {{ form.roll_number }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Phone</label>
+            {{ form.phone }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Department</label>
+            {{ form.department }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Year</label>
+            {{ form.year }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Password</label>
+            {{ form.password1 }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Confirm password</label>
+            {{ form.password2 }}
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-person-plus"></i>
+                Create Account
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

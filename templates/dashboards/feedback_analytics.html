@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Feedback Analytics | Campus Complaint Portal{% endblock %}
+{% block page_heading %}Feedback Analytics{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <article class="stat-card blue"><span>Total Feedback</span><strong>{{ total_feedback }}</strong><i class="bi bi-chat-heart"></i></article>
+    <article class="stat-card green"><span>Average Rating</span><strong>{{ average_rating }}</strong><i class="bi bi-star-half"></i></article>
+    <article class="stat-card amber"><span>Resolved</span><strong>{{ resolved_yes }}</strong><i class="bi bi-hand-thumbs-up"></i></article>
+    <article class="stat-card red"><span>Needs Work</span><strong>{{ resolved_no }}</strong><i class="bi bi-arrow-repeat"></i></article>
+</div>
+
+<div class="content-grid charts">
+    <section class="panel chart-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Ratings</p>
+                <h2>Faculty support scores</h2>
+            </div>
+        </div>
+        <canvas id="ratingChart" height="140"></canvas>
+    </section>
+    <section class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Recent</p>
+                <h2>Student comments</h2>
+            </div>
+        </div>
+        <div class="comment-list">
+            {% for item in recent_feedback %}
+                <article class="comment">
+                    <strong>{{ item.complaint.ticket_id }} - {{ item.rating }}/5</strong>
+                    <p>{{ item.comment|default:"No comment provided." }}</p>
+                    <small>{{ item.student.get_full_name|default:item.student.username }} on {{ item.created_at|date:"d M Y" }}</small>
+                </article>
+            {% empty %}
+                <p class="text-secondary">No feedback submitted yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.feedbackCharts = {
+        labels: {{ rating_labels|safe }},
+        values: {{ rating_values|safe }}
+    };
+</script>
+{% endblock %}

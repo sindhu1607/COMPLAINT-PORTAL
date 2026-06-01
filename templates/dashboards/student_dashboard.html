@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | Campus Complaint Portal{% endblock %}
+{% block page_heading %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <article class="stat-card blue">
+        <span>Total Complaints</span>
+        <strong>{{ total }}</strong>
+        <i class="bi bi-ticket-perforated"></i>
+    </article>
+    <article class="stat-card amber">
+        <span>Pending</span>
+        <strong>{{ pending }}</strong>
+        <i class="bi bi-hourglass-split"></i>
+    </article>
+    <article class="stat-card green">
+        <span>Resolved</span>
+        <strong>{{ resolved }}</strong>
+        <i class="bi bi-check-circle"></i>
+    </article>
+    <article class="stat-card red">
+        <span>Feedback Due</span>
+        <strong>{{ feedback_due }}</strong>
+        <i class="bi bi-star"></i>
+    </article>
+</div>
+
+<div class="content-grid">
+    <section class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Recent Activity</p>
+                <h2>Your latest complaints</h2>
+            </div>
+            <a class="btn btn-primary btn-sm" href="{% url 'complaint_create' %}">
+                <i class="bi bi-plus-circle"></i>
+                New
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>Ticket</th>
+                    <th>Title</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for complaint in recent_complaints %}
+                    <tr>
+                        <td><strong>{{ complaint.ticket_id }}</strong></td>
+                        <td>{{ complaint.title }}</td>
+                        <td><span class="priority priority-{{ complaint.priority }}">{{ complaint.get_priority_display }}</span></td>
+                        <td><span class="status status-{{ complaint.status }}">{{ complaint.get_status_display }}</span></td>
+                        <td>
+                            <a class="btn btn-outline-primary btn-sm" href="{% url 'complaint_detail' complaint.pk %}">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-secondary py-4">No complaints yet.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <aside class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Updates</p>
+                <h2>Notifications</h2>
+            </div>
+            {% if notifications %}
+                <form method="post" action="{% url 'mark_notifications_read' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{% url 'student_dashboard' %}">
+                    <button class="btn btn-outline-secondary btn-sm" type="submit">
+                        <i class="bi bi-check2-all"></i>
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="notification-list">
+            {% for notification in notifications %}
+                <a href="{% if notification.complaint %}{% url 'complaint_detail' notification.complaint.pk %}{% else %}#{% endif %}" class="notification-item">
+                    <strong>{{ notification.title }}</strong>
+                    <span>{{ notification.message|truncatechars:80 }}</span>
+                    <small>{{ notification.created_at|timesince }} ago</small>
+                </a>
+            {% empty %}
+                <p class="text-secondary mb-0">No unread notifications.</p>
+            {% endfor %}
+        </div>
+    </aside>
+</div>
+{% endblock %}

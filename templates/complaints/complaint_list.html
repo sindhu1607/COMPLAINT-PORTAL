@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Complaint History | Campus Complaint Portal{% endblock %}
+{% block page_heading %}Complaint History{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Tickets</p>
+            <h2>Your complaint history</h2>
+        </div>
+        <a class="btn btn-primary btn-sm" href="{% url 'complaint_create' %}">
+            <i class="bi bi-plus-circle"></i>
+            New
+        </a>
+    </div>
+    <form method="get" class="filter-bar">
+        {{ form.q }}
+        {{ form.category }}
+        {{ form.status }}
+        {{ form.priority }}
+        <button class="btn btn-dark" type="submit">
+            <i class="bi bi-search"></i>
+        </button>
+        <a class="btn btn-outline-secondary" href="{% url 'complaint_list' %}">
+            <i class="bi bi-x-lg"></i>
+        </a>
+    </form>
+    {% include "complaints/partials/complaint_table.html" %}
+    {% include "partials/pagination.html" %}
+</section>
+{% endblock %}

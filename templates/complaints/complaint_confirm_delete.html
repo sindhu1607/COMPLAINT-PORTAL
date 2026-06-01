@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Delete {{ complaint.ticket_id }} | Campus Complaint Portal{% endblock %}
+{% block page_heading %}Delete Complaint{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Before Review</p>
+            <h2>Delete {{ complaint.ticket_id }}?</h2>
+        </div>
+    </div>
+    <p class="text-secondary">This complaint has not been accepted yet, so it can still be deleted.</p>
+    <form method="post" class="d-flex gap-2">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">
+            <i class="bi bi-trash"></i>
+            Delete
+        </button>
+        <a class="btn btn-outline-secondary" href="{% url 'complaint_detail' complaint.pk %}">Cancel</a>
+    </form>
+</section>
+{% endblock %}

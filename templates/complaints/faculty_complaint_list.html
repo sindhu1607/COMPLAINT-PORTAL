@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Faculty Complaints | Campus Complaint Portal{% endblock %}
+{% block page_heading %}Complaint Queue{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Faculty Queue</p>
+            <h2>Search and filter complaints</h2>
+        </div>
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'export_complaints_csv' %}?{{ request.GET.urlencode }}">
+            <i class="bi bi-download"></i>
+            Export
+        </a>
+    </div>
+    <form method="get" class="filter-bar admin-filter">
+        {{ form.q }}
+        {{ form.category }}
+        {{ form.department }}
+        {{ form.status }}
+        {{ form.priority }}
+        <button class="btn btn-dark" type="submit">
+            <i class="bi bi-search"></i>
+        </button>
+        <a class="btn btn-outline-secondary" href="{% url 'faculty_complaint_list' %}">
+            <i class="bi bi-x-lg"></i>
+        </a>
+    </form>
+    {% include "complaints/partials/complaint_table.html" with admin_table=True %}
+    {% include "partials/pagination.html" %}
+</section>
+{% endblock %}

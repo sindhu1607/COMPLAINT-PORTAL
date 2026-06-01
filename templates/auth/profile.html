@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Profile | Campus Complaint Portal{% endblock %}
+{% block page_heading %}Profile Management{% endblock %}
+
+{% block content %}
+<div class="panel form-panel wide">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Account</p>
+            <h2>Manage your profile</h2>
+        </div>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="row g-3" novalidate>
+        {% csrf_token %}
+        {% include "partials/form_errors.html" with form=user_form %}
+        {% include "partials/form_errors.html" with form=profile_form %}
+        <div class="col-md-4">
+            <label class="form-label">First name</label>
+            {{ user_form.first_name }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Last name</label>
+            {{ user_form.last_name }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Email</label>
+            {{ user_form.email }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{% if is_faculty_account %}Faculty ID{% else %}Roll number{% endif %}</label>
+            {% if is_faculty_account %}{{ profile_form.faculty_id }}{% else %}{{ profile_form.roll_number }}{% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Phone</label>
+            {{ profile_form.phone }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Department</label>
+            {{ profile_form.department }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{% if is_faculty_account %}Designation{% else %}Year{% endif %}</label>
+            {% if is_faculty_account %}{{ profile_form.designation }}{% else %}{{ profile_form.year }}{% endif %}
+        </div>
+        {% if is_faculty_account %}
+            <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check">
+                    {{ profile_form.is_available }}
+                    <label class="form-check-label">Available for assignment</label>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-6">
+                <label class="form-label">Avatar</label>
+                {{ profile_form.avatar }}
+            </div>
+        {% endif %}
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-check2-circle"></i>
+                Save Profile
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

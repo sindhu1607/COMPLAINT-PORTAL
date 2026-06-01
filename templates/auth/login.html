@@ -1,0 +1,38 @@
+{% extends "public_base.html" %}
+
+{% block title %}Student Login | Campus Complaint Portal{% endblock %}
+
+{% block content %}
+<div class="auth-layout">
+    <div class="auth-hero">
+        <span class="badge text-bg-light">Student Helpdesk</span>
+        <h2>Report campus issues and track every update in one place.</h2>
+        <p>Raise tickets, attach proof, follow status timelines, and reopen unresolved complaints.</p>
+    </div>
+    <div class="panel auth-card">
+        <h3>Welcome back</h3>
+            <p class="text-secondary">Use your roll number or registered email to continue.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% include "partials/form_errors.html" %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.username.id_for_label }}">Roll number or email</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+            </div>
+            <button class="btn btn-primary w-100" type="submit">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Login
+            </button>
+        </form>
+        <div class="auth-links">
+            <a href="{% url 'password_reset' %}">Forgot password?</a>
+            <a href="{% url 'register' %}">Create student account</a>
+            <a href="{% url 'faculty_login' %}">Faculty login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
