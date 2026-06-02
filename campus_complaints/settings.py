@@ -9,9 +9,14 @@ SECRET_KEY = os.getenv(
     "development-only-campus-complaint-portal-secret-key",
 )
 
-DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
+# SECURITY: default to False in production; enable via env var
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
-DJANGO_ALLOWED_HOSTS = ['*']
+# Read allowed hosts from env (comma-separated). Use '*' only for development.
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
+
+# Optional additional trusted origins for CSRF (comma-separated, e.g. https://example.com)
+CSRF_TRUSTED_ORIGINS = [u.strip() for u in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if u.strip()]
 
 
 INSTALLED_APPS = [
@@ -26,6 +31,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -92,6 +98,9 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Use WhiteNoise for static file serving in production with gunicorn
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
