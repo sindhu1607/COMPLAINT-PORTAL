@@ -4,19 +4,24 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+
+
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
     "development-only-campus-complaint-portal-secret-key",
 )
 
-# SECURITY: default to False in production; enable via env var
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
-# Read allowed hosts from env (comma-separated). Use '*' only for development.
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = os.getenv(
+    "DJANGO_ALLOWED_HOSTS",
+    "*"
+).split(",")
 
-# Optional additional trusted origins for CSRF (comma-separated, e.g. https://example.com)
-CSRF_TRUSTED_ORIGINS = [u.strip() for u in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if u.strip()]
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.up.railway.app",
+]
 
 
 INSTALLED_APPS = [
